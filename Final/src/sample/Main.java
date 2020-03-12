@@ -11,21 +11,37 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 
 public class Main extends Application {
 //    DataBase db;
+    Group group = new Group();
+
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Group group = new Group();
         //throw group in a flow pane
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
         Scene scene = new Scene(scrollPane,600,500);  //create scene
 
-        //set background
+        setBackground();
+        setTitle(scene);
+        makeSearchBar(scene);
+        setMovieGrid(scene);
+
+        scrollPane.setContent(group);              //will add to scene
+
+        primaryStage.setTitle("Film Finder");
+        primaryStage.setScene(scene);
+        primaryStage.setFullScreen(false);
+        primaryStage.show();
+    }
+
+    private void setBackground() {
         BackgroundFill bgFill = new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY);
         Background background = new Background(bgFill);
         VBox vbox = new VBox();
@@ -33,13 +49,17 @@ public class Main extends Application {
         vbox.setMinHeight(1000);
         vbox.setMinWidth(2000);
         group.getChildren().add(vbox);
+    }
 
+    private void setTitle(Scene scene) {
         //make  title
         Label title = new Label("Film Finder");
         title.setFont(Font.font("Times New Roman", FontWeight.BOLD,40));
         title.setLayoutX(scene.getWidth()/3);
         group.getChildren().add(title);
+    }
 
+    private void makeSearchBar(Scene scene) {
         //make search bar
         HBox hbox = new HBox();
         Button btn = new Button("Search Films");
@@ -53,8 +73,9 @@ public class Main extends Application {
             //pulls new movies
             //updates screen
         });
+    }
 
-        //create grid or movies
+    private void setMovieGrid(Scene scene) throws FileNotFoundException {
         GridPane grid = new GridPane();
         grid.setLayoutX(scene.getWidth()/18);
         grid.setLayoutY(scene.getHeight()/5);
@@ -82,17 +103,8 @@ public class Main extends Application {
                 grid.add(newBox,j, i);
             }
         }
-
         group.getChildren().add(grid);
-        scrollPane.setContent(group);              //will add to scene
-
-        primaryStage.setTitle("Film Finder");
-        primaryStage.setScene(scene);
-        primaryStage.setFullScreen(false);
-        primaryStage.show();
     }
-
-
     public static void main(String[] args) {
         launch(args);
     }
