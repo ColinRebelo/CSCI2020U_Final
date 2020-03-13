@@ -5,6 +5,10 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -13,6 +17,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -26,18 +32,20 @@ public class Main extends Application {
         //throw group in a flow pane
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
-        Scene scene = new Scene(scrollPane,600,500);  //create scene
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        Scene scene = new Scene(scrollPane,900,700);  //create scene
 
         setBackground();
         setTitle(scene);
         makeSearchBar(scene);
         setMovieGrid(scene);
 
-        scrollPane.setContent(group);              //will add to scene
+        scrollPane.setContent(group);              //puts group into scrollable page
 
         primaryStage.setTitle("Film Finder");
         primaryStage.setScene(scene);
         primaryStage.setFullScreen(false);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
@@ -46,8 +54,8 @@ public class Main extends Application {
         Background background = new Background(bgFill);
         VBox vbox = new VBox();
         vbox.setBackground(background);
-        vbox.setMinHeight(1000);
-        vbox.setMinWidth(2000);
+        vbox.setMinHeight(1400);
+        vbox.setMinWidth(900);
         group.getChildren().add(vbox);
     }
 
@@ -55,7 +63,7 @@ public class Main extends Application {
         //make  title
         Label title = new Label("Film Finder");
         title.setFont(Font.font("Times New Roman", FontWeight.BOLD,40));
-        title.setLayoutX(scene.getWidth()/3);
+        title.setLayoutX(scene.getWidth()/2.625);
         group.getChildren().add(title);
     }
 
@@ -65,7 +73,7 @@ public class Main extends Application {
         Button btn = new Button("Search Films");
         TextField searchBar = new TextField();
         hbox.getChildren().addAll(searchBar,btn);
-        hbox.setLayoutX(scene.getWidth()/3.25);
+        hbox.setLayoutX(scene.getWidth()/2.75);
         hbox.setLayoutY(scene.getHeight()/9);
         group.getChildren().add(hbox);
 
@@ -91,7 +99,7 @@ public class Main extends Application {
                 //creates film selection
                 VBox newBox = new VBox(5);
                 Button newFilm = new Button("temp");                    //put name in here
-                newFilm.setPrefSize(100,20);
+                newFilm.setPrefSize(imageSize,20);
                 buttonArray[i+j] = newFilm;                             //add to array
                 Image newImage = new Image(new FileInputStream("C:/test/wal.png"));          //throw in url
 
