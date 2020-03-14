@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
@@ -62,8 +63,8 @@ public class Main extends Application {
     private void setTitle(Scene scene) {
         //make  title
         Label title = new Label("Film Finder");
-        title.setFont(Font.font("Times New Roman", FontWeight.BOLD,40));
-        title.setLayoutX(scene.getWidth()/2.625);
+        title.setFont(Font.font("Palatino", FontWeight.BOLD,FontPosture.ITALIC,70));
+        title.setLayoutX(scene.getWidth()/3.45);
         group.getChildren().add(title);
     }
 
@@ -71,10 +72,13 @@ public class Main extends Application {
         //make search bar
         HBox hbox = new HBox();
         Button btn = new Button("Search Films");
+        btn.setFont(Font.font("Palatino",FontPosture.ITALIC,12));
         TextField searchBar = new TextField();
+        searchBar.setFont(Font.font("Palatino",FontPosture.ITALIC,12));
+        searchBar.setPrefSize(scene.getWidth()/2, 20);
         hbox.getChildren().addAll(searchBar,btn);
-        hbox.setLayoutX(scene.getWidth()/2.75);
-        hbox.setLayoutY(scene.getHeight()/9);
+        hbox.setLayoutX(scene.getWidth()/4.8);
+        hbox.setLayoutY(scene.getHeight()/6);
         group.getChildren().add(hbox);
 
         btn.setOnAction(e -> {
@@ -86,7 +90,7 @@ public class Main extends Application {
     private void setMovieGrid(Scene scene) throws FileNotFoundException {
         GridPane grid = new GridPane();
         grid.setLayoutX(scene.getWidth()/18);
-        grid.setLayoutY(scene.getHeight()/5);
+        grid.setLayoutY(scene.getHeight()/3.5);
         grid.setHgap(scene.getWidth()/5.5);
         grid.setVgap(scene.getHeight()/10);
 
@@ -99,6 +103,7 @@ public class Main extends Application {
                 //creates film selection
                 VBox newBox = new VBox(5);
                 Button newFilm = new Button("temp");                    //put name in here
+                newFilm.setFont(Font.font("Palatino",FontPosture.ITALIC,12));
                 newFilm.setPrefSize(imageSize,20);
                 buttonArray[i+j] = newFilm;                             //add to array
                 Image newImage = new Image(new FileInputStream("C:/test/wal.png"));          //throw in url
