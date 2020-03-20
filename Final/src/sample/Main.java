@@ -1,10 +1,10 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -16,10 +16,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -27,6 +25,7 @@ import java.io.FileNotFoundException;
 public class Main extends Application {
 //    DataBase db;
     Group group = new Group();
+    Button[] buttonArray = new Button[15];
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -55,7 +54,7 @@ public class Main extends Application {
         Background background = new Background(bgFill);
         VBox vbox = new VBox();
         vbox.setBackground(background);
-        vbox.setMinHeight(1400);
+        vbox.setMinHeight(1800);
         vbox.setMinWidth(900);
         group.getChildren().add(vbox);
     }
@@ -92,10 +91,10 @@ public class Main extends Application {
         grid.setLayoutX(scene.getWidth()/18);
         grid.setLayoutY(scene.getHeight()/3.5);
         grid.setHgap(scene.getWidth()/5.5);
-        grid.setVgap(scene.getHeight()/10);
+        grid.setVgap(scene.getHeight()/5);
 
         double imageSize = (scene.getWidth()/6);                //set size of images
-        Button[] buttonArray = new Button[15];      //size of total movies
+        int btnCount = 0;
 
         //for every movie
         for (int i=0; i<5; i++) {               //total rows
@@ -105,7 +104,7 @@ public class Main extends Application {
                 Button newFilm = new Button("temp");                    //put name in here
                 newFilm.setFont(Font.font("Palatino",FontPosture.ITALIC,12));
                 newFilm.setPrefSize(imageSize,20);
-                buttonArray[i+j] = newFilm;                             //add to array
+                buttonArray[btnCount] = newFilm;                             //add to array
                 Image newImage = new Image(new FileInputStream("C:/test/wal.png"));          //throw in url
 
                 //formats in grid
@@ -114,10 +113,33 @@ public class Main extends Application {
                 newView.setFitWidth(imageSize);
                 newBox.getChildren().addAll(newView,newFilm);
                 grid.add(newBox,j, i);
+                btnCount++;
             }
         }
         group.getChildren().add(grid);
+//        setButtons();
     }
+
+//    private void setButtons() {
+//        for (int i=0; i<buttonArray.length; i++) {
+//            int counter = 0;
+//            double x = 90;
+//            double y = 400;
+//            buttonArray[i].setOnAction(e -> {
+//                int temp = 3;                                     //get movie total play times
+//                VBox vbox = new VBox();
+//                vbox.setLayoutX(x+x*counter);
+//                vbox.setLayoutY(y+y*counter);
+//                for (int j=0; j<temp; j++) {
+//                    Label timeSlot = new Label("12 Jan 19:30");
+//                    vbox.getChildren().add(timeSlot);
+//                }
+//                group.getChildren().add(vbox);
+//            });
+//            counter++;
+//        }
+//    }
+
     public static void main(String[] args) {
         launch(args);
     }
