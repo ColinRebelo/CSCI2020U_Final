@@ -16,33 +16,42 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class UI {
-    //    DataBase db;
+    Movie[] movies;
     Group group = new Group();
     Button[] buttonArray = new Button[15];
 
     public void start(Stage primaryStage) throws Exception {
-        //throw group in a flow pane
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        Scene scene = new Scene(scrollPane,900,700);  //create scene
+        Scene scene = new Scene(scrollPane,900,700);        //create scene
 
+        movies = getMovies(null);
         setBackground();
         setTitle(scene);
         makeSearchBar(scene);
         setMovieGrid(scene);
 
-        scrollPane.setContent(group);              //puts group into scrollable page
+        scrollPane.setContent(group);                                    //puts group into scrollable page
 
         primaryStage.setTitle("Film Finder");
         primaryStage.setScene(scene);
         primaryStage.setFullScreen(false);
         primaryStage.setResizable(false);
         primaryStage.show();
+    }
+
+    private Movie[] getMovies(String title) {
+        //pull normally
+        if (title == null) {}
+        //pull with title
+        else{}
+        return null;
     }
 
     private void setBackground() {
@@ -56,7 +65,6 @@ public class UI {
     }
 
     private void setTitle(Scene scene) {
-        //make  title
         Label title = new Label("Film Finder");
         title.setFont(Font.font("Palatino", FontWeight.BOLD, FontPosture.ITALIC,70));
         title.setLayoutX(scene.getWidth()/3.45);
@@ -64,7 +72,6 @@ public class UI {
     }
 
     private void makeSearchBar(Scene scene) {
-        //make search bar
         HBox hbox = new HBox();
         Button btn = new Button("Search Films");
         btn.setFont(Font.font("Palatino",FontPosture.ITALIC,12));
@@ -77,9 +84,14 @@ public class UI {
         group.getChildren().add(hbox);
 
         btn.setOnAction(e -> {
-            //pulls new movies
-            //updates screen
+            String title = searchBar.getText();     //get whats in bar
+            movies = getMovies(title);              //pulls new movies
+            UpdateScreen();                         //updates screen
         });
+    }
+
+    private void UpdateScreen() {
+
     }
 
     private void setMovieGrid(Scene scene) throws FileNotFoundException {
@@ -113,27 +125,34 @@ public class UI {
             }
         }
         group.getChildren().add(grid);
-//        setButtons();
+        //set all buttons
+        for (Button btn : buttonArray) {
+            btn.setOnAction(e -> { setButtons(btn,scene);});
+        }
     }
 
-//    private void setButtons() {
-//        for (int i=0; i<buttonArray.length; i++) {
-//            int counter = 0;
-//            double x = 90;
-//            double y = 400;
-//            buttonArray[i].setOnAction(e -> {
-//                int temp = 3;                                     //get movie total play times
-//                VBox vbox = new VBox();
-//                vbox.setLayoutX(x+x*counter);
-//                vbox.setLayoutY(y+y*counter);
-//                for (int j=0; j<temp; j++) {
-//                    Label timeSlot = new Label("12 Jan 19:30");
-//                    vbox.getChildren().add(timeSlot);
-//                }
-//                group.getChildren().add(vbox);
-//            });
-//            counter++;
-//        }
-//    }
+    private void setButtons(Button btn,Scene scene) {
+        double[] pos = {90,400,315,320};                //x initial, y initial, x inc, y inc
+        int showTimes = 3;                              //get movie total play times
+        int i = 0;
+
+        //matches button to an index i
+        for (Button iter : buttonArray) {
+            if (iter == btn) { break; }
+            i++;
+        }
+
+        //sets position of showtimes
+        VBox vbox = new VBox();
+        vbox.setLayoutX(pos[0]+pos[2]*((i%3)));
+        vbox.setLayoutY(pos[1]+pos[3]*(Math.ceil(i/3)));
+
+        //creates labels
+        for (int j=0; j<showTimes; j++) {
+            Label timeSlot = new Label("12 Jan 19:30");
+            vbox.getChildren().add(timeSlot);
+        }
+        group.getChildren().add(vbox);
+    }
 }
 
