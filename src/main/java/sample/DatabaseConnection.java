@@ -1,4 +1,4 @@
-package sample;
+package main.java.sample;
 
 import com.google.gson.*;
 import javafx.scene.image.Image;

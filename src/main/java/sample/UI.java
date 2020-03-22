@@ -1,4 +1,4 @@
-package sample;
+package main.java.sample;
 
 import javafx.geometry.Insets;
 import javafx.scene.Group;
@@ -113,7 +113,7 @@ public class UI {
                 newFilm.setFont(Font.font("Palatino",FontPosture.ITALIC,12));
                 newFilm.setPrefSize(imageSize,20);
                 buttonArray[btnCount] = newFilm;                             //add to array
-                Image newImage = new Image(new FileInputStream("C:/test/wal.png"));          //throw in url
+                Image newImage = new Image(new FileInputStream("assets/wal.png"));          //throw in url
 
                 //formats in grid
                 ImageView newView = new ImageView(newImage);
