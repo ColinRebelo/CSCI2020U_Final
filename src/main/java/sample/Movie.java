@@ -1,6 +1,8 @@
 package main.java.sample;
 
-public class Movie {
+import java.io.Serializable;
+
+public class Movie implements Serializable {
     private String title;
     private String overview;
     private String[] genres;

@@ -8,8 +8,6 @@ import java.util.Scanner;
 import java.net.URL;
 import java.net.URLConnection;
 
-
-
 public class DatabaseConnection {
     private static final String API_KEY = "31c693705ad28da5b2e3033019542200";
     private static final String API_MOVIE_URL = "https://api.themoviedb.org/3/movie/";

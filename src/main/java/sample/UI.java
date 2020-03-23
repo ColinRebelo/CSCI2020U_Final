@@ -24,6 +24,7 @@ public class UI {
     Movie[] movies;
     Group group = new Group();
     Button[] buttonArray = new Button[15];
+    Client client = new Client(); //The client used to connect to the server
 
     public void start(Stage primaryStage) throws Exception {
         ScrollPane scrollPane = new ScrollPane();
@@ -44,11 +45,14 @@ public class UI {
         primaryStage.setFullScreen(false);
         primaryStage.setResizable(false);
         primaryStage.show();
+
     }
 
     private Movie[] getMovies(String title) {
         //pull normally
-        if (title == null) {}
+        if (title == null) {
+            client.getMovies();
+        }
         //pull with title
         else{}
         return null;
