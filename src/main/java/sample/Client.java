@@ -23,7 +23,7 @@ public class Client {
             e.printStackTrace();
         }
     }
-
+    
     public Movie[] getMovies() {
         try {
             serverOut.writeUTF("movies"); //ask for the movies
