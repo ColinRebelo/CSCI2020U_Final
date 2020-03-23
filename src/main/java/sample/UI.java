@@ -2,6 +2,7 @@ package main.java.sample;
 
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -24,7 +25,7 @@ public class UI {
     Movie[] movies;
     Group group = new Group();
     Button[] buttonArray = new Button[15];
-    Client client = new Client(); //The client used to connect to the server
+    GridPane grid = new GridPane();
 
     public void start(Stage primaryStage) throws Exception {
         ScrollPane scrollPane = new ScrollPane();
@@ -45,14 +46,11 @@ public class UI {
         primaryStage.setFullScreen(false);
         primaryStage.setResizable(false);
         primaryStage.show();
-
     }
 
     private Movie[] getMovies(String title) {
         //pull normally
-        if (title == null) {
-            client.getMovies();
-        }
+        if (title == null) {}
         //pull with title
         else{}
         return null;
@@ -88,18 +86,23 @@ public class UI {
         group.getChildren().add(hbox);
 
         btn.setOnAction(e -> {
-            String title = searchBar.getText();     //get whats in bar
-            movies = getMovies(title);              //pulls new movies
-            UpdateScreen();                         //updates screen
+            String title = searchBar.getText();          //get whats in bar
+            movies = getMovies(title);                   //pulls new movies
+            UpdateScreen(scene);                         //updates screen
         });
     }
 
-    private void UpdateScreen() {
-
+    private void UpdateScreen(Scene scene) {
+        group.getChildren().clear();                     //reset group
+        //re-call all functions
+        setBackground();
+        setTitle(scene);
+        makeSearchBar(scene);
+        setMovieGrid(scene);
     }
 
-    private void setMovieGrid(Scene scene) throws FileNotFoundException {
-        GridPane grid = new GridPane();
+    private void setMovieGrid(Scene scene) {
+        //sets grid layout coordinates and spacing
         grid.setLayoutX(scene.getWidth()/18);
         grid.setLayoutY(scene.getHeight()/3.5);
         grid.setHgap(scene.getWidth()/5.5);
@@ -117,25 +120,27 @@ public class UI {
                 newFilm.setFont(Font.font("Palatino",FontPosture.ITALIC,12));
                 newFilm.setPrefSize(imageSize,20);
                 buttonArray[btnCount] = newFilm;                             //add to array
-                Image newImage = new Image(new FileInputStream("assets/wal.png"));          //throw in url
-
-                //formats in grid
-                ImageView newView = new ImageView(newImage);
-                newView.setFitHeight(imageSize);
-                newView.setFitWidth(imageSize);
-                newBox.getChildren().addAll(newView,newFilm);
-                grid.add(newBox,j, i);
-                btnCount++;
+                try {
+                    Image newImage = new Image(new FileInputStream("C:/test/wal.png")); //throw in url
+                    //formats in grid
+                    ImageView newView = new ImageView(newImage);
+                    newView.setFitHeight(imageSize);
+                    newView.setFitWidth(imageSize);
+                    newBox.getChildren().addAll(newView,newFilm);
+                    grid.add(newBox,j, i);
+                    btnCount++;
+                }
+                catch (FileNotFoundException e) { e.printStackTrace(); }
             }
         }
         group.getChildren().add(grid);
         //set all buttons
         for (Button btn : buttonArray) {
-            btn.setOnAction(e -> { setButtons(btn,scene);});
+            btn.setOnAction(e -> { setButtons(btn); });
         }
     }
 
-    private void setButtons(Button btn,Scene scene) {
+    private void setButtons(Button btn) {
         double[] pos = {90,400,315,320};                //x initial, y initial, x inc, y inc
         int showTimes = 3;                              //get movie total play times
         int i = 0;
@@ -159,4 +164,3 @@ public class UI {
         group.getChildren().add(vbox);
     }
 }
-
