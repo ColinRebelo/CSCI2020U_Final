@@ -20,10 +20,11 @@ import javafx.stage.Stage;
 import java.io.*;
 
 public class UI {
+    DatabaseConnection db = new DatabaseConnection();
+    Client client = new Client();
     Movie[] movies;
     Group group = new Group();
     Button[] buttonArray = new Button[15];
-    GridPane grid = new GridPane();
 
     public void start(Stage primaryStage) throws Exception {
         ScrollPane scrollPane = new ScrollPane();
@@ -31,7 +32,7 @@ public class UI {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         Scene scene = new Scene(scrollPane,900,700);        //create scene
 
-        movies = getMovies(null);
+        getMovies(null);
         setBackground();
         setTitle(scene);
         makeSearchBar(scene);
@@ -46,12 +47,21 @@ public class UI {
         primaryStage.show();
     }
 
-    private Movie[] getMovies(String title) {
-        //pull normally
-        if (title == null) {}
+    private void getMovies(String title) {
+        movies = client.getMovies();                    //pulls full list
         //pull with title
-        else{}
-        return null;
+        if (title != null) {
+            if (title.equalsIgnoreCase("")) { return; }
+            int i = 0;
+            Movie[] temp = new Movie[movies.length];
+            for (Movie movie : movies) {
+                if (movie.getTitle().equalsIgnoreCase(title)) {
+                    temp[i] = movie;
+                    i++;
+                }
+            }
+            movies = temp;
+        }
     }
 
     private void setBackground() {
@@ -85,7 +95,7 @@ public class UI {
 
         btn.setOnAction(e -> {
             String title = searchBar.getText();          //get whats in bar
-            movies = getMovies(title);                   //pulls new movies
+            getMovies(title);                            //pulls new movies
             UpdateScreen(scene);                         //updates screen
         });
     }
@@ -101,34 +111,38 @@ public class UI {
 
     private void setMovieGrid(Scene scene) {
         //sets grid layout coordinates and spacing
+        GridPane grid = new GridPane();
         grid.setLayoutX(scene.getWidth()/18);
         grid.setLayoutY(scene.getHeight()/3.5);
         grid.setHgap(scene.getWidth()/5.5);
         grid.setVgap(scene.getHeight()/5);
 
         double imageSize = (scene.getWidth()/6);                //set size of images
-        int btnCount = 0;
+        int btnCount = 0;                                       //current button
+        int totalMovies = checkTotalMovies();                        //length of the movies
+        System.out.println(totalMovies);
 
         //for every movie
-        for (int i=0; i<5; i++) {               //total rows
-            for (int j=0; j<3; j++) {            //total columns
+        for (int i=0; i<5; i++) {                           //total rows
+            if (btnCount >= totalMovies) {break;}           //returns if movies is less than 15
+            for (int j=0; j<3; j++) {                       //total columns
+                if (btnCount >= totalMovies) {break;}
                 //creates film selection
                 VBox newBox = new VBox(5);
-                Button newFilm = new Button("temp");                    //put name in here
+                Button newFilm = new Button(movies[btnCount].getTitle());
                 newFilm.setFont(Font.font("Palatino",FontPosture.ITALIC,12));
                 newFilm.setPrefSize(imageSize,20);
-                buttonArray[btnCount] = newFilm;                             //add to array
-                try {
-                    Image newImage = new Image(new FileInputStream("assets/wal.png")); //throw in url
-                    //formats in grid
-                    ImageView newView = new ImageView(newImage);
-                    newView.setFitHeight(imageSize);
-                    newView.setFitWidth(imageSize);
-                    newBox.getChildren().addAll(newView,newFilm);
-                    grid.add(newBox,j, i);
-                    btnCount++;
-                }
-                catch (FileNotFoundException e) { e.printStackTrace(); }
+                buttonArray[btnCount] = newFilm;
+
+                Image newImage = db.getImage(movies[btnCount]); //movie Image
+
+                //formats in grid
+                ImageView newView = new ImageView(newImage);
+                newView.setFitHeight(imageSize);
+                newView.setFitWidth(imageSize);
+                newBox.getChildren().addAll(newView,newFilm);
+                grid.add(newBox,j, i);
+                btnCount++;
             }
         }
         group.getChildren().add(grid);
@@ -138,9 +152,16 @@ public class UI {
         }
     }
 
+    private int checkTotalMovies() {
+        int i = 0;
+        for (Movie movie : movies) {
+            if (movie != null) {i++;}
+        }
+        return i;
+    }
+
     private void setButtons(Button btn) {
-        double[] pos = {90,400,315,320};                //x initial, y initial, x inc, y inc
-        int showTimes = 3;                              //get movie total play times
+        double[] pos = {80,400,315,320};                //x initial, y initial, x inc, y inc
         int i = 0;
 
         //matches button to an index i
@@ -149,16 +170,19 @@ public class UI {
             i++;
         }
 
-        //sets position of showtimes
+        //sets position of info
         VBox vbox = new VBox();
         vbox.setLayoutX(pos[0]+pos[2]*((i%3)));
         vbox.setLayoutY(pos[1]+pos[3]*(Math.ceil(i/3)));
 
+        String[] genres = movies[i].getGenres();
+
         //creates labels
-        for (int j=0; j<showTimes; j++) {
-            Label timeSlot = new Label("12 Jan 19:30");
-            vbox.getChildren().add(timeSlot);
-        }
+        Label genre = new Label("Genre: "+ genres[0]);
+        Label time = new Label("Time: " + movies[i].getRuntime());
+
+        vbox.getChildren().addAll(genre,time);
         group.getChildren().add(vbox);
     }
+
 }
