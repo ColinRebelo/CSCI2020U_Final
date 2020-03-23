@@ -119,7 +119,7 @@ public class UI {
                 newFilm.setPrefSize(imageSize,20);
                 buttonArray[btnCount] = newFilm;                             //add to array
                 try {
-                    Image newImage = new Image(new FileInputStream("C:/test/wal.png")); //throw in url
+                    Image newImage = new Image(new FileInputStream("assets/wal.png")); //throw in url
                     //formats in grid
                     ImageView newView = new ImageView(newImage);
                     newView.setFitHeight(imageSize);
