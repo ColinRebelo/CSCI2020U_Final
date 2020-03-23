@@ -24,4 +24,13 @@ public class Database {
         return null; //default case if the try fails
     }
 
+    public String getShowtimes(String title) {
+        //TODO: READ SHOWTIMES AND SEND THEM
+        return null;
+    }
+
+    public int[] getSeats(String title, String showtime) {
+        //TODO: READ THE SEAT STATUS (OR JUST STORE IT IN AN ARRAY TBH DOESN'T REALLY MATTER) FOR THE MOVIE AND SHOWTIME
+        return null;
+    }
 }

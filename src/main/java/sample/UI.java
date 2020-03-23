@@ -17,8 +17,6 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 public class UI {
     Movie[] movies;

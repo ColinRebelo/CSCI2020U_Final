@@ -1,9 +1,12 @@
 package main.java.sample;
 
-import java.io.*;
-import java.net.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Date;
-import javafx.application.Platform;
 
 public class Server {
     private int clientNo = 0;
@@ -20,12 +23,11 @@ public class Server {
                     Socket socket = serverSocket.accept();
                     clientNo ++;
 
-                    Platform.runLater( () -> {
-                        System.out.println("New client connected, starting new thread");
-                        System.out.println("There are now " + clientNo + " clients connected");
-                    });
+                    System.out.println("New client connected, starting new thread");
+                    System.out.println("There are now " + clientNo + " clients connected");
+
                     //New tread for the client
-                    new Thread(new HandleClient(socket)).start();
+                    new Thread(new HandleClient(socket, clientNo)).start();
                 }
             } catch(IOException e) {
                 e.printStackTrace();
@@ -35,8 +37,10 @@ public class Server {
 
     private class HandleClient implements Runnable {
         private Socket socket;
-        public HandleClient(Socket socket) {
+        int clientNum;
+        public HandleClient(Socket socket, int clientNum) {
             this.socket = socket;
+            this.clientNum = clientNum;
         }
 
         public void run() {
@@ -44,31 +48,46 @@ public class Server {
                 //Get data steams
                 DataInputStream clientIn = new DataInputStream(socket.getInputStream());
                 DataOutputStream clientOut = new DataOutputStream(socket.getOutputStream());
+                ObjectOutputStream clientOutObj = new ObjectOutputStream(socket.getOutputStream());
                 while(true) {
                     //Manage the client requests
                     String data = clientIn.readUTF();
-                    if (data.equals("movies")) {
-                        Movie[] movies = database.getMovies(); //Get the movies from the database
-                        clientOut.writeInt(movies.length);
-                        clientOut.flush(); //send how many movies are being sent
-                        //Send the movie object through the socket
-                        ObjectOutputStream clientOutObj = new ObjectOutputStream(socket.getOutputStream());
-                        for (Movie movie: movies) {
-                            clientOutObj.writeObject(movie);
-                            clientOut.flush();
+                    switch (data) {
+                        case "movies": {
+                            Movie[] movies = database.getMovies(); //Get the movies from the database
+
+                            clientOut.writeInt(movies.length);
+                            clientOut.flush(); //send how many movies are being sent
+
+                            //Send the movie object through the socket
+                            for (Movie movie : movies) {
+                                clientOutObj.writeObject(movie);
+                                clientOut.flush();
+                            }
+                            System.out.println("Sent list of movies to client " + clientNum);
+                            break;
                         }
-                        System.out.println("Sent list of movies to client");
-                        clientOutObj.close();
-                    }else if (data == "showtimes") {
-                        //TODO load movies showtimes from csv
-                        //TODO return movie showtimes as string to client
-                    }else if (data == "seats") {
-                        //TODO seat stuff
-                    }else {
-                        System.out.println("Server was sent a request it does not recognise: " + data);
+                        case "showtimes": {
+                            String title = clientIn.readUTF();
+                            clientOut.writeUTF(database.getShowtimes(title));
+                            System.out.println("Sent showtimes for movie " + title + " to client " + clientNum);
+                            break;
+                        }
+                        case "seats": {
+                            String title = clientIn.readUTF();
+                            String showtime = clientIn.readUTF();
+                            int[] seats = database.getSeats(title, showtime);
+                            for (int seat: seats) {
+                                clientOut.writeInt(seat);
+                            }
+                            System.out.println("Sent seats for " + title + " at " + showtime + " to client " + clientNum);
+                            break;
+                        }
+                        default: {
+                            System.out.println("Server was sent a request it does not recognise: " + data);
+                            break;
+                        }
                     }
-                    clientIn.close();
-                    clientOut.close();
                 }
             }catch (IOException e){
                 e.printStackTrace();
