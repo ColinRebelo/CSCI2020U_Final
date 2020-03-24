@@ -16,6 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.geometry.Pos;
 
 import java.io.*;
 
@@ -172,16 +173,27 @@ public class UI {
 
         //sets position of info
         VBox vbox = new VBox();
-        vbox.setLayoutX(pos[0]+pos[2]*((i%3)));
+        vbox.setLayoutX(pos[0]+pos[2]*((i%3))-50);
         vbox.setLayoutY(pos[1]+pos[3]*(Math.ceil(i/3)));
+        vbox.setAlignment(Pos.CENTER);
+
+        //sets position of show times in info
+        HBox hbox = new HBox(5);
 
         String[] genres = movies[i].getGenres();
 
         //creates labels
         Label genre = new Label("Genre: "+ genres[0]);
         Label time = new Label("Time: " + movies[i].getRuntime());
+        Label show = new Label("Show Times:");
 
-        vbox.getChildren().addAll(genre,time);
+        //creates show times buttons
+        Button showT1 = new Button(movies[i].getShowTimes(0));
+        Button showT2 = new Button(movies[i].getShowTimes(1));
+        Button showT3 = new Button(movies[i].getShowTimes(2));
+
+        hbox.getChildren().addAll(showT1,showT2,showT3);
+        vbox.getChildren().addAll(genre,time,show,hbox);
         group.getChildren().add(vbox);
     }
 

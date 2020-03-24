@@ -43,7 +43,8 @@ public class Client {
     public String getShowtimes(Movie movie) {
         try{
             serverOut.writeUTF("showtimes");
-            serverOut.writeUTF(movie.getId());
+            serverOut.writeUTF(movie.getTitle());
+            //serverOut.writeUTF(movie.getPos());
             return serverIn.readUTF();
         }catch (IOException e) {
             e.printStackTrace();

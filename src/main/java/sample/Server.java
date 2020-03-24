@@ -56,6 +56,8 @@ public class Server {
                         case "movies": {
                             Movie[] movies = database.getMovies(); //Get the movies from the database
 
+                            //database.getShowtimes(0,0);
+
                             clientOut.writeInt(movies.length);
                             clientOut.flush(); //send how many movies are being sent
 
@@ -69,7 +71,8 @@ public class Server {
                         }
                         case "showtimes": {
                             String title = clientIn.readUTF();
-                            clientOut.writeUTF(database.getShowtimes(title));
+                            int pos = Integer.parseInt(clientIn.readUTF());
+                            //clientOut.writeUTF(database.getShowtimes(pos));
                             System.out.println("Sent showtimes for movie " + title + " to client " + clientNum);
                             break;
                         }
