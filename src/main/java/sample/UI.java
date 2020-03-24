@@ -68,6 +68,7 @@ public class UI {
             }
             movies = temp;
         }
+        client.saveMovies(movies);
     }
 
     private void setBackground() {

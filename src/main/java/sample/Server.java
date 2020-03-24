@@ -1,9 +1,6 @@
 package main.java.sample;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
@@ -49,6 +46,7 @@ public class Server {
                 DataInputStream clientIn = new DataInputStream(socket.getInputStream());
                 DataOutputStream clientOut = new DataOutputStream(socket.getOutputStream());
                 ObjectOutputStream clientOutObj = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream clientInObj = new ObjectInputStream(socket.getInputStream());
                 while(true) {
                     //Manage the client requests
                     String data = clientIn.readUTF();
@@ -69,29 +67,25 @@ public class Server {
                             System.out.println("Sent list of movies to client " + clientNum);
                             break;
                         }
-                        case "showtimes": {
-                            String title = clientIn.readUTF();
-                            int pos = Integer.parseInt(clientIn.readUTF());
-                            System.out.println("Sent showtimes for movie " + title + " to client " + clientNum);
-                            break;
-                        }
-                        case "seats": {
-                            String title = clientIn.readUTF();
-                            String showtime = clientIn.readUTF();
-//                            int[] seats = database.getSeats();
-//                            for (int seat: seats) {
-//                                clientOut.writeInt(seat);
-//                            }
-                            System.out.println("Sent seats for " + title + " at " + showtime + " to client " + clientNum);
-                            break;
+                        case "save": {
+                            int num = clientIn.readInt(); //get the number of movies coming in
+                            Movie[] movies = new Movie[num];
+                            for (int i = 0; i < num; i++) {
+                                movies[i] = (Movie) clientInObj.readObject();
+                            }
+                            database.saveMovies(movies);
+                            System.out.println("Sever saved movie data from client: " + clientNum);
                         }
                         default: {
-                            System.out.println("Server was sent a request it does not recognise: " + data);
+                            //System.out.println("Server was sent a request it does not recognise: " + data);
                             break;
                         }
                     }
                 }
             }catch (IOException e){
+                System.out.println("Client Disconnected");
+                clientNo--;
+            }catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }

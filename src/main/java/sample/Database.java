@@ -1,8 +1,6 @@
 package main.java.sample;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class Database {
     private String filename = "assets/movies.csv";
@@ -84,6 +82,41 @@ public class Database {
             }
             br.close();
         }catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveMovies(Movie[] movies) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
+            String idLine = "";
+            String[] showtimeLines = {"","",""};
+            String[] seatsLines = {"","",""};
+            for (Movie movie: movies) {
+                idLine += movie.getId() + ",";
+                for (int i = 0; i < 3; i++) {
+                    showtimeLines[i] += movie.getShowTimes(i) + ",";
+                }
+                for (int i = 0; i < 3; i++) {
+                    seatsLines[i] += movie.getSeating(i) + ",";
+                }
+            }
+            idLine = idLine.substring(0,idLine.length()-1);
+            for (int i = 0; i < 3; i++) {
+                showtimeLines[i] = showtimeLines[i].substring(0, showtimeLines[i].length() - 1);
+            }
+            for (int i = 0; i < 3; i++) {
+                seatsLines[i] = seatsLines[i].substring(0,seatsLines[i].length()-1);
+            }
+            bw.write(idLine + "\n");
+            for (int i = 0; i < 3; i++) {
+                bw.write(showtimeLines[i] + "\n");
+            }
+            for (int i = 0; i < 3; i++) {
+                bw.write(seatsLines[i] + "\n");
+            }
+            bw.close();
+        }catch (Exception e) {
             e.printStackTrace();
         }
     }

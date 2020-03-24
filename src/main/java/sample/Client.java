@@ -1,16 +1,14 @@
 package main.java.sample;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class Client {
     //Data Streams
     private DataInputStream serverIn;
     private DataOutputStream serverOut;
-    ObjectInputStream serverInObj;
+    private ObjectInputStream serverInObj;
+    private ObjectOutputStream serverOutObj;
     private Socket socket;
 
     public Client() {
@@ -19,8 +17,10 @@ public class Client {
             serverIn = new DataInputStream(socket.getInputStream()); //set input stream
             serverOut = new DataOutputStream(socket.getOutputStream()); //set output stream
             serverInObj = new ObjectInputStream(socket.getInputStream()); //Stream specifically to receive movie objects
+            serverOutObj = new ObjectOutputStream(socket.getOutputStream()); //For sending movie objects
         }catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Could not connect to server");
+            System.exit(-1);
         }
     }
     
@@ -40,32 +40,16 @@ public class Client {
         return null; //default case
     }
 
-    public String getShowtimes(Movie movie) {
-        try{
-            serverOut.writeUTF("showtimes");
-            serverOut.writeUTF(movie.getTitle());
-            return serverIn.readUTF();
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public int[] getSeats(Movie movie) {
+    public void saveMovies(Movie[] movies) {
         try {
-            serverOut.writeUTF("seats");
-            serverOut.writeUTF(movie.getTitle());
-           // serverOut.writeUTF(showtime);
-            int numSeats = serverIn.readInt(); //get the number of seats
-            int[] seats = new int[numSeats];
-            for (int i = 0; i < numSeats; i++) {
-                seats[i] = serverIn.readInt(); //Read in the seat status for the while array
+            serverOut.writeUTF("save"); //tell the server to save the new movie list
+            serverOut.writeInt(movies.length); //send the number of movies being sent
+            for (Movie movie: movies) {
+                serverOutObj.writeObject(movie);
             }
-            return seats;
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
     }
 
 }
