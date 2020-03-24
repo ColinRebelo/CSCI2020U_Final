@@ -72,17 +72,16 @@ public class Server {
                         case "showtimes": {
                             String title = clientIn.readUTF();
                             int pos = Integer.parseInt(clientIn.readUTF());
-                            //clientOut.writeUTF(database.getShowtimes(pos));
                             System.out.println("Sent showtimes for movie " + title + " to client " + clientNum);
                             break;
                         }
                         case "seats": {
                             String title = clientIn.readUTF();
                             String showtime = clientIn.readUTF();
-                            int[] seats = database.getSeats(title, showtime);
-                            for (int seat: seats) {
-                                clientOut.writeInt(seat);
-                            }
+//                            int[] seats = database.getSeats();
+//                            for (int seat: seats) {
+//                                clientOut.writeInt(seat);
+//                            }
                             System.out.println("Sent seats for " + title + " at " + showtime + " to client " + clientNum);
                             break;
                         }

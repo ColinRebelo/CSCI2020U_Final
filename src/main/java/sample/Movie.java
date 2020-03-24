@@ -10,6 +10,7 @@ public class Movie implements Serializable {
     private String runtime;
     private String poster_path;
     private String[] showTimes = new String[3];
+    private String[] seating = new String[3];
     private int pos;
 
     public void setTitle(String title) { this.title = title; }
@@ -19,6 +20,7 @@ public class Movie implements Serializable {
     public void setRuntime(String runtime) { this.runtime = runtime; }
     public void setPosterPath(String poster_path) { this.poster_path = poster_path; }
     public void setShowTimes(String showTimes, int i) { this.showTimes[i] = showTimes; }
+    public void setSeating(String seating, int i) { this.seating[i] = seating; }
     public void setPos(int pos) { this.pos = pos; }
 
     public String getTitle() { return title; }
@@ -28,5 +30,6 @@ public class Movie implements Serializable {
     public String getRuntime() { return runtime; }
     public String getPosterPath() { return poster_path; }
     public String getShowTimes(int i) { return showTimes[i]; }
+    public String getSeating(int i) { return seating[i]; }
     public int getPos() { return pos; }
 }

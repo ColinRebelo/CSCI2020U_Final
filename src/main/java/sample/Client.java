@@ -44,7 +44,6 @@ public class Client {
         try{
             serverOut.writeUTF("showtimes");
             serverOut.writeUTF(movie.getTitle());
-            //serverOut.writeUTF(movie.getPos());
             return serverIn.readUTF();
         }catch (IOException e) {
             e.printStackTrace();
@@ -52,11 +51,11 @@ public class Client {
         return null;
     }
 
-    public int[] getSeats(Movie movie, String showtime) {
+    public int[] getSeats(Movie movie) {
         try {
             serverOut.writeUTF("seats");
             serverOut.writeUTF(movie.getTitle());
-            serverOut.writeUTF(showtime);
+           // serverOut.writeUTF(showtime);
             int numSeats = serverIn.readInt(); //get the number of seats
             int[] seats = new int[numSeats];
             for (int i = 0; i < numSeats; i++) {

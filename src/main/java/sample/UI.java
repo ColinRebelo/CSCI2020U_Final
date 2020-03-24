@@ -19,6 +19,8 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.shape.*;
+import javafx.scene.text.*;
 
 import java.io.*;
 
@@ -194,28 +196,124 @@ public class UI {
         showTs[0][i] = new Button(movies[i].getShowTimes(0));
         showTs[1][i] = new Button(movies[i].getShowTimes(1));
         showTs[2][i] = new Button(movies[i].getShowTimes(2));
-        String showT1 = movies[i].getShowTimes(0);
-        String showT2 = movies[i].getShowTimes(1);
-        String showT3 = movies[i].getShowTimes(2);
+        String showTimes[] = { movies[i].getShowTimes(0), movies[i].getShowTimes(1), movies[i].getShowTimes(2) };
+        int movieIndex = i;
 
-        showTs[0][i].setOnAction(e -> { showSeats(showT1); });
-        showTs[1][i].setOnAction(e -> { showSeats(showT2); });
-        showTs[2][i].setOnAction(e -> { showSeats(showT3); });
+        // showtimes button actions
+        showTs[0][i].setOnAction(e -> { setSeats(0, showTimes[0],movieIndex); });
+        showTs[1][i].setOnAction(e -> { setSeats(1, showTimes[1],movieIndex); });
+        showTs[2][i].setOnAction(e -> { setSeats(2, showTimes[2],movieIndex); });
 
         hbox.getChildren().addAll(showTs[0][i],showTs[1][i],showTs[2][i]);
         vbox.getChildren().addAll(genre,time,show,hbox);
         group.getChildren().add(vbox);
     }
 
-    public void showSeats(String showTime) {
+    public void setSeats(int time, String showTime, int i) {
+        // creates new scene
         GridPane pane = new GridPane();
         pane.setAlignment(Pos.TOP_LEFT);
         BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 600, 350, Color.PINK);
+        Scene scene = new Scene(root, 700, 300, Color.PINK);
         Stage seats = new Stage();
-        seats.setTitle("Seating for " + " at " + showTime);
+        seats.setTitle("Seating for " + movies[i].getTitle() + " at " + showTime);
+        seats.setResizable(false);
 
-        pane.setPadding(new Insets(5));
+        // creates screen bar
+        Rectangle screen = new Rectangle(10, 10, 680, 50);
+        screen.setFill(Color.GRAY);
+        Label screenL = new Label("SCREEN");
+        screenL.setTextFill(Color.WHITE);
+        screenL.setTranslateX(300);
+        screenL.setTranslateY(5);
+        screenL.setFont(Font.font("Palatino",FontPosture.ITALIC,25));
+        screenL.setStyle("-fx-font-weight: bold");
+        root.getChildren().add(screen);
+        pane.add(screenL,0,0);
+
+        // creates A B C D letters on both sides
+        String[] lettersS = new String[]{"A", "B", "C", "D"};
+        // column
+        for (int u = 0; u < 2; u++) {
+            Label[] lettersL = new Label[4];
+            // letter
+            for (int s = 0; s < 4; s++) {
+                lettersL[s] = new Label(lettersS[s]);
+                lettersL[s].setFont(Font.font("Palatino", FontPosture.ITALIC, 25));
+                lettersL[s].setTextFill(Color.BLACK);
+                lettersL[s].setTranslateX(15);
+                lettersL[s].setTranslateY(19);
+                if (u == 1)
+                {
+                    // right side letters
+                    pane.add(lettersL[s], 52, s + 1);
+                }
+                else {
+                    // left side letters
+                    pane.add(lettersL[s], 0, s + 1);
+                }
+            }
+        }
+
+        // seat icon layout
+        String seatLayout = movies[i].getSeating(time);
+        // k is char index
+        int k = 0;
+        // a is for seats rows triangle grid
+        int a = 6;
+        // counts seats
+        int count = 1;
+        // initial x and y position for the seat grid
+        int xPos = 215;
+        int yPos = 75;
+
+        // draws seats and numbers
+        for (int x = 0; x < 4; x++){
+            xPos = 215 - (x*46);
+            for (int y = 0; y < a; y++){
+                // stack pane for grouping the numbers on top of the rectangles
+                StackPane stack = new StackPane();
+                // creates rectangles
+                Rectangle seat = new Rectangle();
+                seat.setWidth(40);
+                seat.setHeight(40);
+                seat.setFill(Color.DARKBLUE);
+                seat.setX(xPos);
+                seat.setY(yPos);
+                // creates numbers
+                Text nums = new Text(Integer.toString(count));
+                nums.setFont(Font.font("Palatino",FontPosture.ITALIC,20));
+                nums.setFill(Color.WHITE);
+
+                // draws light blue rectangle if seat is a 1(full) or a dark blue rectangle if the seat is 0(empty)
+                if (seatLayout.charAt(k) == '1')
+                {
+                    seat.setFill(Color.LIGHTBLUE);
+                    root.getChildren().add(seat);
+                }
+                else
+                {
+                    // adds rectangle and number to stack
+                    stack.getChildren().addAll(seat, nums);
+                    // moves stack x and y position
+                    stack.setLayoutX(xPos+20);
+                    stack.setLayoutY(yPos+20);
+                    root.getChildren().add(stack);
+                }
+                // adds 1 to the number of seats
+                count++;
+                // goes to next char in the seatLayout string
+                k++;
+                // adds 46 pixels to the x coordinate
+                xPos+=46;
+            }
+            // adds space for one more rectangle on the left and right sides of the previous row
+            a+=2;
+            // adds 46 pixels to the y coordinate
+            yPos+=46;
+        }
+
+        pane.setPadding(new Insets(10));
         pane.setHgap(10);
         pane.setVgap(10);
 
