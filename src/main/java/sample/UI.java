@@ -17,6 +17,8 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
+import javafx.geometry.Insets;
+import javafx.scene.layout.BorderPane;
 
 import java.io.*;
 
@@ -26,6 +28,7 @@ public class UI {
     Movie[] movies;
     Group group = new Group();
     Button[] buttonArray = new Button[15];
+    Button[][] showTs = new Button[3][15];
 
     public void start(Stage primaryStage) throws Exception {
         ScrollPane scrollPane = new ScrollPane();
@@ -188,13 +191,37 @@ public class UI {
         Label show = new Label("Show Times:");
 
         //creates show times buttons
-        Button showT1 = new Button(movies[i].getShowTimes(0));
-        Button showT2 = new Button(movies[i].getShowTimes(1));
-        Button showT3 = new Button(movies[i].getShowTimes(2));
+        showTs[0][i] = new Button(movies[i].getShowTimes(0));
+        showTs[1][i] = new Button(movies[i].getShowTimes(1));
+        showTs[2][i] = new Button(movies[i].getShowTimes(2));
+        String showT1 = movies[i].getShowTimes(0);
+        String showT2 = movies[i].getShowTimes(1);
+        String showT3 = movies[i].getShowTimes(2);
 
-        hbox.getChildren().addAll(showT1,showT2,showT3);
+        showTs[0][i].setOnAction(e -> { showSeats(showT1); });
+        showTs[1][i].setOnAction(e -> { showSeats(showT2); });
+        showTs[2][i].setOnAction(e -> { showSeats(showT3); });
+
+        hbox.getChildren().addAll(showTs[0][i],showTs[1][i],showTs[2][i]);
         vbox.getChildren().addAll(genre,time,show,hbox);
         group.getChildren().add(vbox);
+    }
+
+    public void showSeats(String showTime) {
+        GridPane pane = new GridPane();
+        pane.setAlignment(Pos.TOP_LEFT);
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, 600, 350, Color.PINK);
+        Stage seats = new Stage();
+        seats.setTitle("Seating for " + " at " + showTime);
+
+        pane.setPadding(new Insets(5));
+        pane.setHgap(10);
+        pane.setVgap(10);
+
+        root.setCenter(pane);
+        seats.setScene(scene);
+        seats.show();
     }
 
 }
