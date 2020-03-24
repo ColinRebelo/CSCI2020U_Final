@@ -72,7 +72,7 @@ public class UI {
     }
 
     private void setBackground() {
-        BackgroundFill bgFill = new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY);
+        BackgroundFill bgFill = new BackgroundFill(Color.DARKBLUE, CornerRadii.EMPTY, Insets.EMPTY);
         Background background = new Background(bgFill);
         VBox vbox = new VBox();
         vbox.setBackground(background);
