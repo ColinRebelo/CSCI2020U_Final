@@ -18,7 +18,7 @@ apply plugin: 'java'
 
 task(runUI, dependsOn: 'classes', type: JavaExec){
     doFirst {
-        jvmArgs = ['--module-path', 'C:/JavaFX/javafx-sdk-11.0.2/lib', '--add-modules', 'javafx.controls,javafx.fxml']
+        jvmArgs = ['--module-path', classpath.asPath, '--add-modules', 'javafx.controls,javafx.fxml']
     }
     main = "main.java.sample.StartUi"
     classpath = sourceSets.main.runtimeClasspath
@@ -26,7 +26,7 @@ task(runUI, dependsOn: 'classes', type: JavaExec){
 
 task(runServer, dependsOn: 'classes', type: JavaExec){
     doFirst {
-        jvmArgs = ['--module-path', 'C:/JavaFX/javafx-sdk-11.0.2/lib', '--add-modules', 'javafx.controls,javafx.fxml']
+        jvmArgs = ['--module-path', classpath.asPath, '--add-modules', 'javafx.controls,javafx.fxml']
     }
     main = "main.java.sample.StartServer"
     classpath = sourceSets.main.runtimeClasspath
