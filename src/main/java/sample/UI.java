@@ -42,6 +42,7 @@ public class UI {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         Scene scene = new Scene(scrollPane,900,700);        //create scene
 
+        //sets everything in scene
         getMovies();
         setBackground();
         setTitle(scene);
@@ -57,9 +58,10 @@ public class UI {
         primaryStage.show();
     }
 
+    //Pulls movies and images from client
     private void getMovies() {
-        allMovies = client.getMovies();                    //pulls full list
-        movies = allMovies;
+        allMovies = client.getMovies();                         //copy of all movies
+        movies = allMovies;                                     //currently being used
         System.out.println("Loading movie images...");
         for (Movie movie: allMovies) {
             Image poster = db.getImage(movie);
@@ -67,6 +69,7 @@ public class UI {
         }
     }
 
+    //Searches for movies with the same title
     private void searchMovies(String title) {
         if (title != null) {
             if (title.equalsIgnoreCase("")) {
@@ -84,6 +87,7 @@ public class UI {
         }
     }
 
+    //Sets background colour to entire scene
     private void setBackground() {
         BackgroundFill bgFill = new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY);
         Background background = new Background(bgFill);
@@ -94,6 +98,7 @@ public class UI {
         group.getChildren().add(vbox);
     }
 
+    //Sets title
     private void setTitle(Scene scene) {
         Label title = new Label("Film Finder");
         title.setFont(Font.font("Palatino", FontWeight.BOLD, FontPosture.ITALIC,70));
@@ -101,25 +106,29 @@ public class UI {
         group.getChildren().add(title);
     }
 
+    //Creates searchBar and sets its actions
     private void makeSearchBar(Scene scene) {
         HBox hbox = new HBox();
         Button btn = new Button("Search Films");
         btn.setFont(Font.font("Palatino",FontPosture.ITALIC,12));
+
         TextField searchBar = new TextField();
         searchBar.setFont(Font.font("Palatino",FontPosture.ITALIC,12));
         searchBar.setPrefSize(scene.getWidth()/2, 20);
+
         hbox.getChildren().addAll(searchBar,btn);
         hbox.setLayoutX(scene.getWidth()/4.8);
         hbox.setLayoutY(scene.getHeight()/6);
         group.getChildren().add(hbox);
 
         btn.setOnAction(e -> {
-            String title = searchBar.getText();          //get whats in bar
+            String title = searchBar.getText();             //get whats in bar
             searchMovies(title);                            //pulls new movies
-            UpdateScreen(scene);                         //updates screen
+            UpdateScreen(scene);                            //updates screen
         });
     }
 
+    //Clears screen and re-calls functions
     private void UpdateScreen(Scene scene) {
         group.getChildren().clear();                     //reset group
         //re-call all functions
@@ -129,6 +138,7 @@ public class UI {
         setMovieGrid(scene);
     }
 
+    //Adds every movie pic and title into a grid
     private void setMovieGrid(Scene scene) {
         //sets grid layout coordinates and spacing
         GridPane grid = new GridPane();
@@ -139,7 +149,7 @@ public class UI {
 
         double imageSize = (scene.getWidth()/6);                //set size of images
         int btnCount = 0;                                       //current button
-        int totalMovies = checkTotalMovies();                        //length of the movies
+        int totalMovies = checkTotalMovies();                   //length of the movies
 
         //for every movie
         for (int i=0; i<5; i++) {                           //total rows
@@ -171,6 +181,7 @@ public class UI {
         }
     }
 
+    //Checks movie current size
     private int checkTotalMovies() {
         int i = 0;
         for (Movie movie : movies) {
@@ -179,6 +190,7 @@ public class UI {
         return i;
     }
 
+    //Sets up buttons to output movie info
     private void setButtons(Button btn) {
         double[] pos = {80,400,315,320};                //x initial, y initial, x inc, y inc
         int i = 0;
@@ -256,8 +268,7 @@ public class UI {
                 lettersL[s].setTextFill(Color.BLACK);
                 lettersL[s].setTranslateX(15);
                 lettersL[s].setTranslateY(19);
-                if (u == 1)
-                {
+                if (u == 1) {
                     // right side letters
                     pane.add(lettersL[s], 52, s + 1);
                 }
