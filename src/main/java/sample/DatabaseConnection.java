@@ -61,7 +61,6 @@ public class DatabaseConnection {
 
     public Image getImage(Movie movie) {
         Image image = new Image(API_IMAGE_URL + movie.getPosterPath());
-        System.out.println("Test");
         return image;
     }
 }

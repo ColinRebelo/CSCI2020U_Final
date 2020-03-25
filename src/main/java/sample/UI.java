@@ -62,7 +62,6 @@ public class UI {
         movies = allMovies;
         System.out.println("Loading movie images...");
         for (Movie movie: allMovies) {
-            System.out.println(movie.getId());
             Image poster = db.getImage(movie);
             images.put(movie.getId(), poster);
         }
@@ -312,6 +311,7 @@ public class UI {
                     // moves stack x and y position
                     stack.setLayoutX(xPos+20);
                     stack.setLayoutY(yPos+20);
+                    stack.toFront();
                     root.getChildren().add(stack);
                 }
                 // adds 1 to the number of seats
@@ -327,13 +327,44 @@ public class UI {
             yPos+=46;
         }
 
+        //TEMP SELECTION SETUP
+        GridPane gp = new GridPane();
+        gp.setAlignment(Pos.BOTTOM_CENTER);
+        VBox vbox = new VBox();
+        gp.add(new Label(""),0,0);
+        gp.add(new Label("Select Seats:"),0,3);
+        TextField select = new TextField();
+        gp.add(select,1,3);
+        Button res = new Button("Reserve");
+        res.setOnAction(e -> {
+            reserveSeats(select.getText(), i, time);
+            seats.close();
+        });
+        gp.add(res,2,3);
+
         pane.setPadding(new Insets(10));
         pane.setHgap(10);
         pane.setVgap(10);
 
         root.setCenter(pane);
-        seats.setScene(scene);
+        vbox.getChildren().addAll(root, gp); //also temp
+        seats.setScene(new Scene(vbox,700, 320)); //also kinda temp
         seats.show();
+    }
+
+    private void reserveSeats(String text, int index, int time) {
+        System.out.println("Reserving: " + text);
+        String[] seatsStr = text.split(",");
+        int[] seats = new int[seatsStr.length];
+        for (int i = 0; i < seatsStr.length; i++) {
+            seats[i] = Integer.valueOf(seatsStr[i]);
+        }
+        String movSeats = movies[index].getSeating(time);
+        for (int i = 0; i < seats.length; i++) {
+            movSeats = movSeats.substring(0,seats[i]-1) + '1' + movSeats.substring(seats[i]);
+        }
+        movies[index].setSeating(movSeats, time);
+        client.saveMovies(allMovies);
     }
 
 }
