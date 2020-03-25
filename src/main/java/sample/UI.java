@@ -23,14 +23,18 @@ import javafx.scene.shape.*;
 import javafx.scene.text.*;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UI {
     DatabaseConnection db = new DatabaseConnection();
     Client client = new Client();
     Movie[] movies;
+    Movie[] allMovies;
     Group group = new Group();
     Button[] buttonArray = new Button[15];
     Button[][] showTs = new Button[3][15];
+    HashMap<String, Image> images = new HashMap<>();
 
     public void start(Stage primaryStage) throws Exception {
         ScrollPane scrollPane = new ScrollPane();
@@ -38,7 +42,7 @@ public class UI {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         Scene scene = new Scene(scrollPane,900,700);        //create scene
 
-        getMovies(null);
+        getMovies();
         setBackground();
         setTitle(scene);
         makeSearchBar(scene);
@@ -53,26 +57,36 @@ public class UI {
         primaryStage.show();
     }
 
-    private void getMovies(String title) {
-        movies = client.getMovies();                    //pulls full list
-        //pull with title
+    private void getMovies() {
+        allMovies = client.getMovies();                    //pulls full list
+        movies = allMovies;
+        System.out.println("Loading movie images...");
+        for (Movie movie: allMovies) {
+            System.out.println(movie.getId());
+            Image poster = db.getImage(movie);
+            images.put(movie.getId(), poster);
+        }
+    }
+
+    private void searchMovies(String title) {
         if (title != null) {
-            if (title.equalsIgnoreCase("")) { return; }
+            if (title.equalsIgnoreCase("")) {
+                movies = allMovies;
+            }
             int i = 0;
             Movie[] temp = new Movie[movies.length];
-            for (Movie movie : movies) {
-                if (movie.getTitle().equalsIgnoreCase(title)) {
+            for (Movie movie : allMovies) {
+                if (movie.getTitle().toLowerCase().contains(title.toLowerCase())) {
                     temp[i] = movie;
                     i++;
                 }
             }
             movies = temp;
         }
-        client.saveMovies(movies);
     }
 
     private void setBackground() {
-        BackgroundFill bgFill = new BackgroundFill(Color.DARKBLUE, CornerRadii.EMPTY, Insets.EMPTY);
+        BackgroundFill bgFill = new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY);
         Background background = new Background(bgFill);
         VBox vbox = new VBox();
         vbox.setBackground(background);
@@ -102,7 +116,7 @@ public class UI {
 
         btn.setOnAction(e -> {
             String title = searchBar.getText();          //get whats in bar
-            getMovies(title);                            //pulls new movies
+            searchMovies(title);                            //pulls new movies
             UpdateScreen(scene);                         //updates screen
         });
     }
@@ -127,7 +141,6 @@ public class UI {
         double imageSize = (scene.getWidth()/6);                //set size of images
         int btnCount = 0;                                       //current button
         int totalMovies = checkTotalMovies();                        //length of the movies
-        System.out.println(totalMovies);
 
         //for every movie
         for (int i=0; i<5; i++) {                           //total rows
@@ -141,7 +154,7 @@ public class UI {
                 newFilm.setPrefSize(imageSize,20);
                 buttonArray[btnCount] = newFilm;
 
-                Image newImage = db.getImage(movies[btnCount]); //movie Image
+                Image newImage = images.get(movies[btnCount].getId()); //movie Image
 
                 //formats in grid
                 ImageView newView = new ImageView(newImage);
