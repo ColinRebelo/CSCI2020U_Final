@@ -14,4 +14,18 @@ repositories {
     compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
 }
 apply plugin: 'java'
-mainClassName = "main.java.sample.Main"
+
+
+task(runUI, dependsOn: 'classes', type: JavaExec){
+    doFirst {
+        jvmArgs = ['--module-path', 'E:/JavaJDK/javafx-sdk-11.0.2/lib', '--add-modules', 'javafx.controls,javafx.fxml']
+    }
+    main = "main.java.sample.StartUi"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+defaultTasks 'runUI'
+
+
+//mainClassName = ["main.java.sample.StartServer", "main.java.sample.StartUi"]
+
