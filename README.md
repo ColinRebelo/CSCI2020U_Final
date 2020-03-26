@@ -3,7 +3,7 @@ Final Project Repository for CSCI2020U
 
 Colin Rebelo 
 -Created Repository 
--Adapted gradle build file to run multiple tasks 
+-Created build.gradle
 -Created gradle tasks "gradle runServer", "gradle runUI"
 
 Jonathan Drake 
