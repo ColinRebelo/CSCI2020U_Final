@@ -1,24 +1,24 @@
 # CSCI2020U_Final
 Final Project Repository for CSCI2020U
 
-Colin Rebelo 
+Colin Rebelo (ColinRebelo)
 -Created Repository 
 -Created build.gradle
 -Created gradle tasks "gradle runServer", "gradle runUI"
 
-Jonathan Drake 
+Jonathan Drake ()
 -Created DatabaseConnection.java 
 -Created Movie.java
 
-Gabriel Hoeher 
+Gabriel Hoeher ()
 -Created UI.java
 
-Connor Mahon 
+Connor Mahon (Connor Mahon)
 -Created the server and client 
 -Assisted with working on Database 
 -Assisted with build.gradle
 
-Cole Anam 
+Cole Anam ()
 -Created UI popup for seat interface 
 -Allowed interaction between the user and seat selection
 
