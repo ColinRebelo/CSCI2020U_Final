@@ -6,11 +6,11 @@ Colin Rebelo (ColinRebelo)
 -Created build.gradle
 -Created gradle tasks "gradle runServer", "gradle runUI"
 
-Jonathan Drake ()
+Jonathan Drake (jonathan-drake)
 -Created DatabaseConnection.java 
 -Created Movie.java
 
-Gabriel Hoeher ()
+Gabriel Hoeher (Gabriel-Hoeher)
 -Created UI.java
 
 Connor Mahon (Connor Mahon)
@@ -18,7 +18,7 @@ Connor Mahon (Connor Mahon)
 -Assisted with working on Database 
 -Assisted with build.gradle
 
-Cole Anam ()
+Cole Anam (ColeAnam)
 -Created UI popup for seat interface 
 -Allowed interaction between the user and seat selection
 
