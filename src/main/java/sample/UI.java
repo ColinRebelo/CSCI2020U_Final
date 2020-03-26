@@ -21,6 +21,8 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.shape.*;
 import javafx.scene.text.*;
+import javafx.scene.input.MouseEvent;
+import javafx.event.EventHandler;
 
 import java.io.*;
 import java.util.HashMap;
@@ -238,7 +240,7 @@ public class UI {
         // creates new scene
         GridPane pane = new GridPane();
         pane.setAlignment(Pos.TOP_LEFT);
-        BorderPane root = new BorderPane();
+        Group root = new Group();
         Scene scene = new Scene(root, 700, 300, Color.PINK);
         Stage seats = new Stage();
         seats.setTitle("Seating for " + movies[i].getTitle() + " at " + showTime);
@@ -250,11 +252,11 @@ public class UI {
         Label screenL = new Label("SCREEN");
         screenL.setTextFill(Color.WHITE);
         screenL.setTranslateX(300);
-        screenL.setTranslateY(5);
+        screenL.setTranslateY(15);
         screenL.setFont(Font.font("Palatino",FontPosture.ITALIC,25));
         screenL.setStyle("-fx-font-weight: bold");
         root.getChildren().add(screen);
-        pane.add(screenL,0,0);
+        root.getChildren().add(screenL);
 
         // creates A B C D letters on both sides
         String[] lettersS = new String[]{"A", "B", "C", "D"};
@@ -266,23 +268,16 @@ public class UI {
                 lettersL[s] = new Label(lettersS[s]);
                 lettersL[s].setFont(Font.font("Palatino", FontPosture.ITALIC, 25));
                 lettersL[s].setTextFill(Color.BLACK);
-                lettersL[s].setTranslateX(15);
-                lettersL[s].setTranslateY(19);
-                if (u == 1) {
-                    // right side letters
-                    pane.add(lettersL[s], 52, s + 1);
-                }
-                else {
-                    // left side letters
-                    pane.add(lettersL[s], 0, s + 1);
-                }
+                lettersL[s].setTranslateX(15 + (u*650));
+                lettersL[s].setTranslateY(75 + (s*48));
+                root.getChildren().add(lettersL[s]);
             }
         }
 
         // seat icon layout
         String seatLayout = movies[i].getSeating(time);
         // k is char index
-        int k = 0;
+        int k = 1;
         // a is for seats rows triangle grid
         int a = 6;
         // counts seats
@@ -291,43 +286,101 @@ public class UI {
         int xPos = 215;
         int yPos = 75;
 
+        // seat array
+        Rectangle[] seat = new Rectangle[36];
+
         // draws seats and numbers
         for (int x = 0; x < 4; x++){
             xPos = 215 - (x*46);
+            k = 1;
             for (int y = 0; y < a; y++){
                 // stack pane for grouping the numbers on top of the rectangles
                 StackPane stack = new StackPane();
-                // creates rectangles
-                Rectangle seat = new Rectangle();
-                seat.setWidth(40);
-                seat.setHeight(40);
-                seat.setFill(Color.DARKBLUE);
-                seat.setX(xPos);
-                seat.setY(yPos);
+                // creates temp seat
+                Rectangle temp = new Rectangle();
+                temp.setWidth(40);
+                temp.setHeight(40);
+                temp.setFill(Color.DARKBLUE);
+                temp.setX(xPos);
+                temp.setY(yPos);
                 // creates numbers
-                Text nums = new Text(Integer.toString(count));
+                Text nums = new Text(Integer.toString(k));
                 nums.setFont(Font.font("Palatino",FontPosture.ITALIC,20));
                 nums.setFill(Color.WHITE);
 
                 // draws light blue rectangle if seat is a 1(full) or a dark blue rectangle if the seat is 0(empty)
-                if (seatLayout.charAt(k) == '1')
+                if (seatLayout.charAt(count-1) == '1')
                 {
-                    seat.setFill(Color.LIGHTBLUE);
-                    root.getChildren().add(seat);
+                    temp.setFill(Color.LIGHTBLUE);
+                    seat[count-1] = temp;
+                    root.getChildren().add(seat[count-1]);
                 }
                 else
                 {
                     // adds rectangle and number to stack
-                    stack.getChildren().addAll(seat, nums);
+                    seat[count-1] = temp;
+                    stack.getChildren().addAll(seat[count-1], nums);
+
+                    // finals for events
+                    final int finalX = xPos;
+                    final int finalY = yPos + 70;
+                    final Rectangle seatB = seat[count-1];
+                    final String finK = Integer.toString(k);
+                    final int finCount = count;
+                    // mouse hover over empty seat event
+                    stack.addEventHandler(MouseEvent.MOUSE_ENTERED,
+                            new EventHandler<MouseEvent>() {
+                                public void handle (MouseEvent e){
+                                    // checks if seat has been reserved
+                                    if (seatB.getFill()!=Color.LIGHTBLUE) {
+                                        // changes seat icon to light green
+                                        seatB.setFill(Color.LIGHTGREEN);
+                                        nums.setFill(Color.LIGHTGREEN);
+                                        // click on empty seat event
+                                        stack.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
+                                            String rowLetter = "";
+                                            if (finCount <= 6) {
+                                                rowLetter = "A";
+                                            } else if (finCount > 6 && finCount <= 14) {
+                                                rowLetter = "B";
+                                            } else if (finCount > 14 && finCount <= 24) {
+                                                rowLetter = "C";
+                                            } else {
+                                                rowLetter = "D";
+                                            }
+                                            // call reserveSeats
+                                            reserveSeats(rowLetter + finK, i, time, finCount - 1);
+                                            // change seat icon colour to light blue(reserved)
+                                            seatB.setFill(Color.LIGHTBLUE);
+                                            nums.setFill(Color.LIGHTBLUE);
+
+                                        });
+
+                                    }
+                            }
+                    });
+                    // mouse hover exit event
+                    stack.addEventHandler(MouseEvent.MOUSE_EXITED,
+                            new EventHandler<MouseEvent>() {
+                                public void handle(MouseEvent e) {
+                                    if (seatB.getFill() != Color.LIGHTBLUE) {
+                                        seatB.setFill(Color.DARKBLUE);
+                                        nums.setFill(Color.WHITE);
+                                    }
+                                }
+                            });
+                    // replaces current seat with final of current seat
+                    seat[count-1] = seatB;
+
                     // moves stack x and y position
-                    stack.setLayoutX(xPos+20);
-                    stack.setLayoutY(yPos+20);
+                    stack.setLayoutX(xPos);
+                    stack.setLayoutY(yPos);
                     stack.toFront();
                     root.getChildren().add(stack);
                 }
-                // adds 1 to the number of seats
+                // counts the number of seats
                 count++;
-                // goes to next char in the seatLayout string
+                // formatting seat numbers
                 k++;
                 // adds 46 pixels to the x coordinate
                 xPos+=46;
@@ -338,42 +391,23 @@ public class UI {
             yPos+=46;
         }
 
-        //TEMP SELECTION SETUP
-        GridPane gp = new GridPane();
-        gp.setAlignment(Pos.BOTTOM_CENTER);
+        // creates vbox
         VBox vbox = new VBox();
-        gp.add(new Label(""),0,0);
-        gp.add(new Label("Select Seats:"),0,3);
-        TextField select = new TextField();
-        gp.add(select,1,3);
-        Button res = new Button("Reserve");
-        res.setOnAction(e -> {
-            reserveSeats(select.getText(), i, time);
-            seats.close();
-        });
-        gp.add(res,2,3);
 
         pane.setPadding(new Insets(10));
         pane.setHgap(10);
         pane.setVgap(10);
 
-        root.setCenter(pane);
-        vbox.getChildren().addAll(root, gp); //also temp
+        pane.getChildren().add(root);
+        vbox.getChildren().addAll(pane); //also temp
         seats.setScene(new Scene(vbox,700, 320)); //also kinda temp
         seats.show();
     }
 
-    private void reserveSeats(String text, int index, int time) {
+    private void reserveSeats(String text, int index, int time, int curSeat) {
         System.out.println("Reserving: " + text);
-        String[] seatsStr = text.split(",");
-        int[] seats = new int[seatsStr.length];
-        for (int i = 0; i < seatsStr.length; i++) {
-            seats[i] = Integer.valueOf(seatsStr[i]);
-        }
         String movSeats = movies[index].getSeating(time);
-        for (int i = 0; i < seats.length; i++) {
-            movSeats = movSeats.substring(0,seats[i]-1) + '1' + movSeats.substring(seats[i]);
-        }
+        movSeats = movSeats.substring(0,curSeat) + '1' + movSeats.substring(curSeat+1);
         movies[index].setSeating(movSeats, time);
         client.saveMovies(allMovies);
     }
